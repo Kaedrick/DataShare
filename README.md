@@ -216,6 +216,239 @@ Le script teste un scénario d'inscription, d'upload puis de consultatin du lien
 - `docs/DataShare_presentation.pptx`
 - `docs/TESTING.md`
 - `docs/SECURITY.md`
+
+## Partie API :
+
+## Documentation API
+
+L'API DataShare est une API REST utilisée par le front-end React.
+
+URL de base en local :
+
+http://localhost:5000/api
+
+Certaines routes nécessitent un token JWT. Dans ce cas, il faut ajouter l'en-tête suivant :
+
+Authorization: Bearer <token>
+
+---
+
+### Santé de l'API
+
+GET /health
+
+Vérifie que l'API est bien démarrée.
+
+Réponse 200 :
+
+{
+  "status": "OK",
+  "app": "DataShare API"
+}
+
+---
+
+## Authentification
+
+### POST /auth/register
+
+Crée un compte utilisateur.
+
+Body :
+
+{
+  "email": "user@example.com",
+  "password": "Password123!",
+  "confirmPassword": "Password123!"
+}
+
+Réponse 200 :
+
+{
+  "token": "jwt_token",
+  "email": "user@example.com"
+}
+
+Erreurs possibles :
+
+- 400 Bad Request : email déjà utilisé ou données invalides.
+- 500 Internal Server Error : erreur serveur ou base de données indisponible.
+
+---
+
+### POST /auth/login
+
+Connecte un utilisateur existant.
+
+Body :
+
+{
+  "email": "user@example.com",
+  "password": "Password123!"
+}
+
+Réponse 200 :
+
+{
+  "token": "jwt_token",
+  "email": "user@example.com"
+}
+
+Erreurs possibles :
+
+- 401 Unauthorized : identifiants incorrects.
+- 500 Internal Server Error : erreur serveur ou base de données indisponible.
+
+---
+
+## Fichiers
+
+### POST /files/upload
+
+Upload un fichier et génère un lien de téléchargement.
+
+Cette route nécessite une authentification JWT.
+
+Headers :
+
+Authorization: Bearer <token>
+Content-Type: multipart/form-data
+
+Form data :
+
+- file : fichier à envoyer
+- expirationDays : durée de validité du lien
+- password : mot de passe optionnel pour protéger le téléchargement
+
+Réponse 200 :
+
+{
+  "id": "file_id",
+  "fileName": "document.txt",
+  "downloadUrl": "http://localhost:5173/download/token",
+  "expiresAt": "2026-07-27T00:00:00"
+}
+
+Erreurs possibles :
+
+- 401 Unauthorized : utilisateur non connecté.
+- 400 Bad Request : fichier manquant ou données invalides.
+
+---
+
+### GET /files/me
+
+Récupère la liste des fichiers envoyés par l'utilisateur connecté.
+
+Cette route nécessite une authentification JWT.
+
+Headers :
+
+Authorization: Bearer <token>
+
+Réponse 200 :
+
+[
+  {
+    "id": "file_id",
+    "originalName": "document.txt",
+    "size": 1234,
+    "uploadedAt": "2026-07-20T00:00:00",
+    "expiresAt": "2026-07-27T00:00:00",
+    "isExpired": false,
+    "downloadUrl": "http://localhost:5173/download/token"
+  }
+]
+
+Erreurs possibles :
+
+- 401 Unauthorized : utilisateur non connecté.
+
+---
+
+### DELETE /files/{id}
+
+Supprime un fichier appartenant à l'utilisateur connecté.
+
+Cette route nécessite une authentification JWT.
+
+Headers :
+
+Authorization: Bearer <token>
+
+Réponse 204 :
+
+Aucun contenu retourné.
+
+Erreurs possibles :
+
+- 401 Unauthorized : utilisateur non connecté.
+- 404 Not Found : fichier introuvable ou appartenant à un autre utilisateur.
+
+---
+
+## Téléchargement
+
+### GET /download/{token}
+
+Récupère les métadonnées d'un fichier à partir de son token public.
+
+Cette route ne nécessite pas d'authentification.
+
+Réponse 200 :
+
+{
+  "originalName": "document.txt",
+  "size": 1234,
+  "expiresAt": "2026-07-27T00:00:00",
+  "requiresPassword": false
+}
+
+Erreurs possibles :
+
+- 404 Not Found : token invalide ou fichier introuvable.
+- 410 Gone : lien expiré.
+
+---
+
+### POST /download/{token}
+
+Télécharge le fichier associé au token.
+
+Cette route ne nécessite pas d'authentification, mais peut demander un mot de passe si le fichier est protégé.
+
+Body sans mot de passe :
+
+{}
+
+Body avec mot de passe :
+
+{
+  "password": "motdepasse"
+}
+
+Réponse 200 :
+
+Retourne le fichier à télécharger.
+
+Erreurs possibles :
+
+- 401 Unauthorized : mot de passe incorrect.
+- 404 Not Found : token invalide ou fichier introuvable.
+- 410 Gone : lien expiré.
+
+---
+
+## Résumé des routes
+
+GET    /api/health              Vérifie que l'API fonctionne                          Auth : Non
+POST   /api/auth/register       Crée un compte                                        Auth : Non
+POST   /api/auth/login          Connecte un utilisateur                               Auth : Non
+POST   /api/files/upload        Envoie un fichier                                     Auth : Oui
+GET    /api/files/me            Liste les fichiers de l'utilisateur                   Auth : Oui
+DELETE /api/files/{id}          Supprime un fichier                                   Auth : Oui
+GET    /api/download/{token}    Récupère les métadonnées d'un fichier                 Auth : Non
+POST   /api/download/{token}    Télécharge un fichier                                 Auth : Non
 - `docs/PERF.md`
 - `docs/MAINTENANCE.md`
 - `docs/AI_USAGE.md`
