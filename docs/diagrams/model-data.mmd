@@ -1,0 +1,21 @@
+erDiagram
+    USERS ||--o{ STORED_FILES : owns
+    USERS {
+        uuid Id PK
+        text Email UK
+        text PasswordHash
+        datetime CreatedAt
+    }
+    STORED_FILES {
+        uuid Id PK
+        text OriginalName
+        text StoredName
+        text ContentType
+        bigint Size
+        text RelativePath
+        text Token UK
+        text PasswordHash nullable
+        datetime UploadedAt
+        datetime ExpiresAt
+        uuid UserId FK
+    }

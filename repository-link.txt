@@ -1,0 +1,5 @@
+Lien du repository GitHub ou GitLab :
+
+A compléter avant le dépôt final : https://github.com/USERNAME/DataShare
+
+Le repository doit contenir le code source complet, l'historique Git, les scripts de déploiement, le README, les fichiers de suivi qualité et maintenance, la documentation technique et le support de présentation.

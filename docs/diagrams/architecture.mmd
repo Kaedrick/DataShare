@@ -1,0 +1,6 @@
+flowchart LR
+    U[Utilisateur] --> F[Front-end React / Vite]
+    F --> API[API REST ASP.NET Core]
+    API --> DB[(PostgreSQL)]
+    API --> FS[Stockage local uploads]
+    API --> JWT[Authentification JWT]

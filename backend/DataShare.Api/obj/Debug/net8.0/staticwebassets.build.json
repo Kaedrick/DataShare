@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "NV5awVnUNPMHeKtfqKxBiB3+porD6LR33tm/KQcX9RY=",
+  "Source": "DataShare.Api",
+  "BasePath": "_content/DataShare.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
